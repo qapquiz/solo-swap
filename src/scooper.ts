@@ -490,14 +490,14 @@ async function loadJupyterApi(): Promise<[DefaultApi, { [id: string]: TokenInfo 
   let quoteApi = createJupiterApiClient(CONFIG);
 
   // let quoteApi = createJupiterApiClient();
-  const allTokens = await fetch("https://token.jup.ag/all");
+  const allTokens = await fetch("https://tokens.jup.ag/all");
   const allList = await allTokens.json();
   const tokenMap: { [id: string]: TokenInfo } = {};
   allList.forEach((token: TokenInfo) => {
     tokenMap[token.address] = token;
   });
 
-  const strictTokens = await fetch("https://token.jup.ag/strict");
+  const strictTokens = await fetch("https://tokens.jup.ag/strict");
   const strictList = await strictTokens.json();
   strictList.forEach((token: TokenInfo) => {
     tokenMap[token.address].strict = true;
