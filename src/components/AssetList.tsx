@@ -7,6 +7,7 @@ import {
   TokenBalance,
   loadJupyterApi,
   USDC_TOKEN_MINT,
+  USDC_TOKEN_INFO,
   getAssetBurnReturn,
   sendTokens,
 } from "../scooper";
@@ -63,6 +64,7 @@ const AssetList: React.FC = () => {
   const [search, setSearch] = useState("");
   const [percentage, setPercentage] = useState(100);
   const [sendToWallet, setSendToWallet] = useState("");
+  const [selectedOutputTokenInfo, setSelectedOutputTokenInfo] = useState<TokenInfo>(USDC_TOKEN_INFO);
 
   // Filters
   const [showZeroBalance, setShowZeroBalance] = useState(false);
@@ -180,6 +182,7 @@ const AssetList: React.FC = () => {
         wallet,
         connection,
         Object.values(assetList),
+        selectedOutputTokenInfo.address,
         jupiterQuoteApi!,
         percentage,
         (id: string, state: string) => {
@@ -1109,7 +1112,7 @@ const AssetList: React.FC = () => {
                 <p className="lowercase text-2xl mt-2 font-medium bg-black text-white">
                   {/* ${(valueToSwap / 10 ** 6).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")} */}
                 </p>
-                <p className="lowercase text-sm bg-black text-white">to swap</p>
+                <p className="lowercase text-sm bg-black text-white">to swap to <button>USDC</button></p>
               </div>
             </article>
             <button

@@ -53,6 +53,19 @@ interface TokenBalance {
 }
 
 const USDC_TOKEN_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const USDC_TOKEN_INFO: TokenInfo = {
+  address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  chainId: 101,
+  decimals: 6,
+  name: "USD Coin",
+  symbol: "USDC",
+  logoURI: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+  tags: [
+    "old-registry",
+    "solana-fm"
+  ],
+  strict: true
+}
 
 const liquidStableTokens = ["mSOL", "JitoSOL", "bSOL", "mrgnLST", "jSOL", "stSOL", "scnSOL", "LST"];
 const forbiddenTokens = ["USDC", "USDT"].concat(liquidStableTokens);
@@ -298,6 +311,7 @@ async function sweepTokens(
   wallet: WalletContextState,
   connection: Connection,
   assets: Asset[],
+  outputTokenMint: string,
   quoteApi: DefaultApi,
   percentage: number,
   transactionStateCallback: (id: string, state: string) => void,
@@ -311,7 +325,7 @@ async function sweepTokens(
     assets.map(async (asset) => {
       const quoteRequest: QuoteGetRequest = {
         inputMint: asset.asset.token.address,
-        outputMint: USDC_TOKEN_MINT,
+        outputMint: outputTokenMint,
         amount: Math.floor((Number(asset.asset.balance) / 100) * percentage), // Casting this to number can discard precision...
         slippageBps: 1500,
       };
@@ -490,14 +504,14 @@ async function loadJupyterApi(): Promise<[DefaultApi, { [id: string]: TokenInfo 
   let quoteApi = createJupiterApiClient(CONFIG);
 
   // let quoteApi = createJupiterApiClient();
-  const allTokens = await fetch("https://tokens.jup.ag/all");
+  const allTokens = await fetch("https://token.jup.ag/all");
   const allList = await allTokens.json();
   const tokenMap: { [id: string]: TokenInfo } = {};
   allList.forEach((token: TokenInfo) => {
     tokenMap[token.address] = token;
   });
 
-  const strictTokens = await fetch("https://tokens.jup.ag/strict");
+  const strictTokens = await fetch("https://token.jup.ag/strict");
   const strictList = await strictTokens.json();
   strictList.forEach((token: TokenInfo) => {
     tokenMap[token.address].strict = true;
@@ -646,5 +660,6 @@ export {
   getTotalFee,
   sendTokens,
   USDC_TOKEN_MINT,
+  USDC_TOKEN_INFO,
 };
 export type { TokenInfo, TokenBalance };
